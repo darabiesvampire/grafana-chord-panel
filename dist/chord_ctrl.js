@@ -140,13 +140,13 @@ System.register(['app/plugins/sdk', 'lodash', './rendering'], function (_export,
             this.columnMap = data.columnMap;
             this.columns = data.columns;
             this.data = this.detangleSrv.dataConvertor(dataList, this.templateSrv, {
-              target: 'issue',
+              target: 'file',
               metric: 'coupling',
+              coupling: true,
               sortingOrder: 'desc',
               sourceTypeData: 'All',
               targetTypeData: 'All'
             }, 'chord');
-            console.log(data);
             this.render(this.data);
           }
         }, {

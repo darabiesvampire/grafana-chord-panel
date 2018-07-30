@@ -177,21 +177,21 @@ export default function link(scope, elem, attrs, ctrl) {
     function chordTip (d) {
       var p = d3.format(".1%"), q = d3.format(",.2f")
       return "Chord Info:<br/>"
-        +  d.sname + " imports from " + d.tname
-        + ": $" + q(d.svalue) + "M<br/>"
-        + p(d.svalue/d.stotal) + " of " + d.sname + "'s Total ($" + q(d.stotal) + "M)<br/>"
-        + p(d.svalue/d.mtotal) + " of Matrix Total ($" + q(d.mtotal) + "M)<br/>"
-        + "<br/>"
-        + d.tname + " imports from " + d.sname
-        + ": $" + q(d.tvalue) + "M<br/>"
-        + p(d.tvalue/d.ttotal) + " of " + d.tname + "'s Total ($" + q(d.ttotal) + "M)<br/>"
-        + p(d.tvalue/d.mtotal) + " of Matrix Total ($" + q(d.mtotal) + "M)";
+        +  d.sname + "\'s coupling to " + d.tname
+        + ": " + d.svalue + "<br/>"
+        + p(d.svalue/d.stotal) + " of " + d.sname + "'s Total ($" + d.stotal + ")<br/>"
+        + p(d.svalue/d.mtotal) + " of Total ($" + d.mtotal + ")<br/>"
+        // + "<br/>"
+        // + d.tname + " imports from " + d.sname
+        // + ": $" + q(d.tvalue) + "M<br/>"
+        // + p(d.tvalue/d.ttotal) + " of " + d.tname + "'s Total ($" + q(d.ttotal) + ")<br/>"
+        // + p(d.tvalue/d.mtotal) + " of Total ($" + q(d.mtotal) + ")";
     }
     function groupTip (d) {
       var p = d3.format(".1%"), q = d3.format(",.2f")
-      return "Group Info:<br/>"
-        + d.gname + " : " + q(d.gvalue) + "M<br/>"
-        + p(d.gvalue/d.mtotal) + " of Matrix Total (" + q(d.mtotal) + "M)"
+      return "Directory Info:<br/>"
+        + d.gname + " : " + q(d.gvalue) + "<br/>"
+        + p(d.gvalue/d.mtotal) + " of Total (" + q(d.mtotal) + ")"
     }
     function mouseover(d, i) {
       d3.select("#tooltip")
@@ -226,43 +226,43 @@ export default function link(scope, elem, attrs, ctrl) {
       else
       {
           // var csvData = csvData.filter(function(d){ return d.importer1 == "Panama"});
-        data = [
-          {
-            dir1: "framework",
-            dir2: "utils",
-            coupling1: 12,
-            coupling2: 32,
-          },
-          {
-            dir1: "framework",
-            dir2: "tools",
-            coupling1: 62,
-            coupling2: 222,
-          },
-          {
-            dir1: "framework",
-            dir2: "ipojo",
-            coupling1: 552,
-            coupling2: 140,
-          },
-          {
-            dir1: "framework",
-            dir2: "test",
-            coupling1: 23,
-            coupling2: 44,
-          },
-        ];
+        // data = [
+        //   {
+        //     dir1: "framework",
+        //     dir2: "utils",
+        //     coupling1: 12,
+        //     coupling2: 12,
+        //   },
+        //   {
+        //     dir1: "framework",
+        //     dir2: "tools",
+        //     coupling1: 62,
+        //     coupling2: 62,
+        //   },
+        //   {
+        //     dir1: "framework",
+        //     dir2: "ipojo",
+        //     coupling1: 122,
+        //     coupling2: 122,
+        //   },
+        //   {
+        //     dir1: "framework",
+        //     dir2: "test",
+        //     coupling1: 23,
+        //     coupling2: 23,
+        //   },
+        // ];
         var mpr = Mapper.chordMpr(data);
         mpr
-          .addValuesToMap('dir1')
-          .addValuesToMap('dir2')
+          .addValuesToMap('source')
+          .addValuesToMap('target')
           .setFilter(function (row, a, b) {
-            return (row.dir1 === a.name && row.dir2 === b.name) ||
-              (row.dir1 === b.name && row.dir2 === a.name)
+            return (row.source === a.name && row.target === b.name) ||
+              (row.source === b.name && row.target === a.name)
           })
           .setAccessor(function (recs, a, b) {
             if (!recs[0]) return 0;
-            return recs[0].dir1 === a.name ? +recs[0].coupling1 : +recs[0].coupling2;
+            return recs[0].source === a.name ? +recs[0].couplingValue : +recs[0].couplingValue;
           });
         addChordChart(mpr.getMatrix(), mpr.getMap());
         showError(false);
