@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/module.js"],"names":["ChordCtrl"],"mappings":";;;;;;;;AAASA,e,eAAAA,S;;;2BAGPA,S","file":"module.js","sourcesContent":["import { ChordCtrl } from './chord_ctrl';\n\nexport {\n  ChordCtrl as PanelCtrl\n};\n\n"]}
