@@ -13,7 +13,7 @@ module.exports = function(grunt) {
       vendor: {
         expand: true,
         flatten: true,
-        src: ['node_modules/d3/build/d3.min.js', 'node_modules/d3-scale-chromatic/dist/d3-scale-chromatic.min.js'],
+        src: ['node_modules/d3/d3.js', 'node_modules/d3-scale-chromatic/dist/d3-scale-chromatic.min.js'],
         dest: 'dist/vendor'
       },
       src_to_dist: {

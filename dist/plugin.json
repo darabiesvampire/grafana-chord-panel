@@ -11,8 +11,8 @@
     },
     "keywords": ["chord", "panel"],
     "logos": {
-      "small": "src/img/chord_diagram_small.png",
-      "large": "src/img/chord_diagram_large.png"
+      "small": "img/chord_diagram_small.png",
+      "large": "img/chord_diagram_large.png"
     },
     "links": [
       {"name": "Project site", "url": "https://github.com/darabiesvampire/grafana-chord-panel"}

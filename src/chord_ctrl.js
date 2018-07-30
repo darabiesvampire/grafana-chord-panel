@@ -80,7 +80,14 @@ export class ChordCtrl extends MetricsPanelCtrl {
 
     this.columnMap = data.columnMap; 
     this.columns = data.columns;
-    this.data = this.detangleSrv.dataFilter(dataList, this.detangleSrv.getCustomConfig(this.templateSrv, this.panel))[0].rows;
+    this.data = this.detangleSrv.dataConvertor(dataList, this.templateSrv, {
+      target: 'issue',
+      metric: 'coupling',
+      sortingOrder: 'desc',
+      sourceTypeData: 'All',
+      targetTypeData: 'All',
+    }, 'chord');
+    console.log(data);
     this.render(this.data);
   }
 
