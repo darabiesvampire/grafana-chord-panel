@@ -5,7 +5,7 @@
   "description": "Grafana chord panel plugin.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/grafana/piechart-panel.git"
+    "url": "git+https://github.com/darabiesvampire/grafana-chord-panel.git"
   },
   "author": "Ural Sezer",
   "license": "",
