@@ -225,22 +225,46 @@ export default function link(scope, elem, attrs, ctrl) {
       }
       else
       {
-        d3.csv('/public/plugins/grafana-chord-panel/trade.csv', function (error, csvData) {
           // var csvData = csvData.filter(function(d){ return d.importer1 == "Panama"});
-          var mpr = Mapper.chordMpr(csvData);
-          mpr
-            .addValuesToMap('importer1')
-            .addValuesToMap('importer2')
-            .setFilter(function (row, a, b) {
-              return (row.importer1 === a.name && row.importer2 === b.name) ||
-                (row.importer1 === b.name && row.importer2 === a.name)
-            })
-            .setAccessor(function (recs, a, b) {
-              if (!recs[0]) return 0;
-              return recs[0].importer1 === a.name ? +recs[0].flow1 : +recs[0].flow2;
-            });
-          addChordChart(mpr.getMatrix(), mpr.getMap());
-        });
+        data = [
+          {
+            dir1: "framework",
+            dir2: "utils",
+            coupling1: 12,
+            coupling2: 32,
+          },
+          {
+            dir1: "framework",
+            dir2: "tools",
+            coupling1: 62,
+            coupling2: 222,
+          },
+          {
+            dir1: "framework",
+            dir2: "ipojo",
+            coupling1: 552,
+            coupling2: 140,
+          },
+          {
+            dir1: "framework",
+            dir2: "test",
+            coupling1: 23,
+            coupling2: 44,
+          },
+        ];
+        var mpr = Mapper.chordMpr(data);
+        mpr
+          .addValuesToMap('dir1')
+          .addValuesToMap('dir2')
+          .setFilter(function (row, a, b) {
+            return (row.dir1 === a.name && row.dir2 === b.name) ||
+              (row.dir1 === b.name && row.dir2 === a.name)
+          })
+          .setAccessor(function (recs, a, b) {
+            if (!recs[0]) return 0;
+            return recs[0].dir1 === a.name ? +recs[0].coupling1 : +recs[0].coupling2;
+          });
+        addChordChart(mpr.getMatrix(), mpr.getMap());
         showError(false);
       }
 
