@@ -179,8 +179,8 @@ export default function link(scope, elem, attrs, ctrl) {
       return "Chord Info:<br/>"
         +  d.sname + "\'s coupling to " + d.tname
         + ": " + d.svalue + "<br/>"
-        + p(d.svalue/d.stotal) + " of " + d.sname + "'s Total ($" + d.stotal + ")<br/>"
-        + p(d.svalue/d.mtotal) + " of Total ($" + d.mtotal + ")<br/>"
+        + p(d.svalue/d.stotal) + " of " + d.sname + "'s Total (" + d.stotal + ")<br/>"
+        + p(d.svalue/d.mtotal) + " of Total (" + d.mtotal + ")<br/>"
         // + "<br/>"
         // + d.tname + " imports from " + d.sname
         // + ": $" + q(d.tvalue) + "M<br/>"

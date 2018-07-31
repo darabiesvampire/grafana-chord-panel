@@ -150,7 +150,7 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
       function chordTip(d) {
         var p = d3.format(".1%"),
             q = d3.format(",.2f");
-        return "Chord Info:<br/>" + d.sname + "\'s coupling to " + d.tname + ": " + d.svalue + "<br/>" + p(d.svalue / d.stotal) + " of " + d.sname + "'s Total ($" + d.stotal + ")<br/>" + p(d.svalue / d.mtotal) + " of Total ($" + d.mtotal + ")<br/>";
+        return "Chord Info:<br/>" + d.sname + "\'s coupling to " + d.tname + ": " + d.svalue + "<br/>" + p(d.svalue / d.stotal) + " of " + d.sname + "'s Total (" + d.stotal + ")<br/>" + p(d.svalue / d.mtotal) + " of Total (" + d.mtotal + ")<br/>";
         // + "<br/>"
         // + d.tname + " imports from " + d.sname
         // + ": $" + q(d.tvalue) + "M<br/>"
