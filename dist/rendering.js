@@ -124,7 +124,7 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
       var fill = d3.scale.ordinal().range(['#7a3b2e', '#a79e84', '#bd5734', '#454140', '#f7786b', '#f7cac9', '#034f84', '#92a8d1', '#ada397', '#bdcebe', '#eca1a6', '#d6cbd3', '#ff7b25', '#d64161', '#feb236', '#6b5b95']);
       var chord = d3.layout.chord().padding(.02).sortSubgroups(d3.descending).sortChords(d3.descending);
       var arc = d3.svg.arc().innerRadius(r0).outerRadius(r0 + 20);
-
+      var highlightedArc = d3.svg.arc().innerRadius(r0).outerRadius(r0 + 70);
       var svg = d3.select(panel.svgContainer).append("svg").attr("width", w).attr("height", h).attr("class", "d3-chord").append("svg:g").attr("id", "circle").attr("transform", "translate(" + w / 2 + "," + h / 2 + ")");
       svg.append("circle").attr("r", r0 + 20);
       var rdr = Mapper.chordRdr(matrix, mmap);
@@ -135,14 +135,12 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
           return checkHighlight(rdr(d).gname) ? "15px" : "0px";
         });
       });
-      g.append("svg:path").style("stroke", "black").style("fill", function (d) {
+      var allArcs = g.append("svg:path").style("stroke", "black").style("fill", function (d) {
         return fill(rdr(d).gname);
       }).attr("d", arc);
       var allTheGroups = g.append("svg:text").each(function (d) {
         d.angle = (d.startAngle + d.endAngle) / 2;
-      }).attr("dy", ".35em").style("font-family", "helvetica, arial, sans-serif").style("font-size", function (d) {
-        return checkHighlight(rdr(d).gname) ? "15px" : "0px";
-      }) // remove text
+      }).attr("dy", ".35em").style("font-family", "helvetica, arial, sans-serif").style("font-size", "0px") // remove text
       .style("fill", "white").attr("text-anchor", function (d) {
         return d.angle > Math.PI ? "end" : null;
       }).attr("transform", function (d) {
@@ -182,7 +180,6 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
         // + p(d.tvalue/d.mtotal) + " of Total ($" + q(d.mtotal) + ")";
       }
       function groupTip(d) {
-        console.log(d);
         var p = d3.format(".1%"),
             q = d3.format(",.2f");
         return "Directory Info:<br/>" + d.gname + " : " + q(d.gvalue) + "<br/>" + p(d.gvalue / d.mtotal) + " of Total (" + q(d.mtotal) + ")";
@@ -208,21 +205,18 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
         });
       }
 
-      // if (ctrl.highlight_text) {
-      //   g.selectAll("path")
-      //     .transition()
-      //     .duration(1000)
-      //     .delay(2000)
-      //     .attr("d", d => { return checkHighlight(rdr(d).gname) ? highlightedArc : arc })
-      //     .style("stroke", "black")
-      //     .style("fill", function(d) { return fill(rdr(d).gname); })
-      //     .transition()
-      //     .duration(1000)
-      //     .delay(1000)
-      //     .attr("d", arc)
-      //     .style("stroke", "black")
-      //     .style("fill", function(d) { return fill(rdr(d).gname); })
-      // }
+      if (ctrl.highlight_text) {
+        allTheGroups.transition().style("font-size", function (d) {
+          return checkHighlight(rdr(d).gname) ? "15px" : "0px";
+        });
+        allArcs.transition().duration(1000).delay(2000).style("stroke", "black").style("fill", function (d) {
+          return fill(rdr(d).gname);
+        }).attr("d", function (d) {
+          return checkHighlight(rdr(d).gname) ? highlightedArc(d) : arc(d);
+        }).transition().duration(1000).delay(10000).style("stroke", function (d) {
+          return checkHighlight(rdr(d).gname) ? "lightblue" : "black";
+        }).attr("d", arc);
+      }
     }
 
     function render() {

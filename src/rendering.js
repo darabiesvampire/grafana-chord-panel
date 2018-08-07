@@ -132,7 +132,9 @@ export default function link(scope, elem, attrs, ctrl) {
     var arc = d3.svg.arc()
       .innerRadius(r0)
       .outerRadius(r0 + 20);
-
+    var highlightedArc = d3.svg.arc()
+      .innerRadius(r0 )
+      .outerRadius(r0 + 70);
     var svg = d3.select(panel.svgContainer)
       .append("svg")
       .attr("width", w)
@@ -154,7 +156,7 @@ export default function link(scope, elem, attrs, ctrl) {
         d3.select("#tooltip").style("visibility", "hidden");
         allTheGroups.transition().style("font-size", function(d) { return checkHighlight(rdr(d).gname) ? "15px" : "0px"; });
       });
-    g.append("svg:path")
+    var allArcs = g.append("svg:path")
       .style("stroke", "black")
       .style("fill", function(d) { return fill(rdr(d).gname); })
       .attr("d", arc);
@@ -162,7 +164,7 @@ export default function link(scope, elem, attrs, ctrl) {
       .each(function(d) { d.angle = (d.startAngle + d.endAngle) / 2; })
       .attr("dy", ".35em")
       .style("font-family", "helvetica, arial, sans-serif")
-      .style("font-size", function(d) { return checkHighlight(rdr(d).gname) ? "15px" : "0px"; }) // remove text
+      .style("font-size", "0px") // remove text
       .style("fill", "white")
       .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
       .attr("transform", function(d) {
@@ -170,7 +172,7 @@ export default function link(scope, elem, attrs, ctrl) {
           + "translate(" + (r0 + 26) + ")"
           + (d.angle > Math.PI ? "rotate(180)" : "");
       })
-      .text(function(d) { return rdr(d).gname; });
+      .text(function(d) { return rdr(d).gname; })
     var chordPaths = svg.selectAll("path.chord")
       .data(chord.chords())
       .enter().append("svg:path")
@@ -237,21 +239,23 @@ export default function link(scope, elem, attrs, ctrl) {
       });
     }
 
-    // if (ctrl.highlight_text) {
-    //   g.selectAll("path")
-    //     .transition()
-    //     .duration(1000)
-    //     .delay(2000)
-    //     .attr("d", d => { return checkHighlight(rdr(d).gname) ? highlightedArc : arc })
-    //     .style("stroke", "black")
-    //     .style("fill", function(d) { return fill(rdr(d).gname); })
-    //     .transition()
-    //     .duration(1000)
-    //     .delay(1000)
-    //     .attr("d", arc)
-    //     .style("stroke", "black")
-    //     .style("fill", function(d) { return fill(rdr(d).gname); })
-    // }
+    if (ctrl.highlight_text) {
+      allTheGroups.transition().style("font-size", function(d) { return checkHighlight(rdr(d).gname) ? "15px" : "0px"; });
+      allArcs.transition()
+        .duration(1000)
+        .delay(2000)
+        .style("stroke", "black")
+        .style("fill", function(d) { return fill(rdr(d).gname); })
+        .attr("d",   function(d)  {
+          return checkHighlight(rdr(d).gname) ? highlightedArc(d) : arc(d)
+        })
+        .transition()
+        .duration(1000)
+        .delay(10000)
+        .style("stroke",  function(d) { return checkHighlight(rdr(d).gname) ? "lightblue" : "black" })
+        .attr("d", arc)
+
+    }
   }
 
 
