@@ -20,11 +20,23 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
 
     var theme = grafanaBootData.user.lightTheme ? '-light' : '-dark';
 
-    elem = elem.find('.networkchart-panel');
+    // elem = elem.find('.networkchart-panel');
+
 
     ctrl.events.on('render', function () {
       render();
     });
+    data = ctrl.data;
+    panel = ctrl.panel;
+
+    var gaugeByClass = elem.find('.grafana-d3-chord');
+    //gaugeByClass.append('<center><div id="'+ctrl.containerDivId+'"></div></center>');
+    gaugeByClass.append('<div id="' + ctrl.containerDivId + '"></div>');
+    var container = gaugeByClass[0].childNodes[0];
+    ctrl.setContainer(container);
+    if ($('#' + panel.chordDivId).length) {
+      $('#' + panel.chordDivId).remove();
+    }
 
     function setElementHeight() {
       try {
@@ -34,7 +46,7 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
         }
 
         height -= 5; // padding
-        height -= panel.title ? 24 : 9; // subtract panel title bar
+        height -= panel.title ? 24 : 9; // subtract panel title ş
 
         elem.css('height', height + 'px');
 
@@ -76,38 +88,35 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
       return tooltipEval;
     }
 
-    function createTooltipEvals(columnTexts) {
-
-      var firstTooltip = panel.first_term_tooltip;
-
-      var tooltipEvalText1 = firstTooltip && columnTexts && columnTexts.length ? parseTooltip(firstTooltip, columnTexts) : "{{d[0]}}";
-      tooltipEvals[0] = ctrl.$interpolate(tooltipEvalText1);
-
-      var secondTooltip = panel.second_term_tooltip;
-
-      var tooltipEvalText2 = secondTooltip && columnTexts && columnTexts.length ? parseTooltip(secondTooltip, columnTexts) : "{{d[1]}}";
-      tooltipEvals[1] = ctrl.$interpolate(tooltipEvalText2);
-    }
-
-    function combineFieldIndex(columnTexts) {
-      if (panel.combine_to_show) {
-        var showWhichIndex = columnTexts.indexOf(panel.combine_to_show);
-
-        if (showWhichIndex !== -1) return showWhichIndex;
+    function getPanelWidthBySpan() {
+      var trueWidth = 0;
+      if (typeof panel.span === 'undefined') {
+        // get the width based on the scaled container (v5 needs this)
+        trueWidth = panel.panelContainer.offsetParent.clientWidth;
+      } else {
+        // v4 and previous used fixed spans
+        var viewPortWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        // get the pixels of a span
+        var pixelsPerSpan = viewPortWidth / 12;
+        // multiply num spans by pixelsPerSpan
+        trueWidth = Math.round(panel.span * pixelsPerSpan);
       }
-
-      return 0;
+      return trueWidth;
     }
 
     function addChordChart(matrix, mmap) {
+
+      function checkHighlight(d) {
+        return ctrl.highlight_text && d.toLowerCase().indexOf(ctrl.highlight_text) !== -1;
+      }
+
       if (typeof d3 == 'undefined') return;
-      d3.select("#circle").selectAll("*").remove();
 
-      var width = elem.width();
+      var width = getPanelWidthBySpan();
       var height = elem.height();
-
       // var color = d3.scaleOrdinal(d3[panel.color_scale]);
-
+      // d3.select(elem[0]).selectAll("*").remove();
+      d3.select(".d3-chord").remove();
       var w = width,
           h = height,
           r1 = h / 2,
@@ -115,7 +124,8 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
       var fill = d3.scale.ordinal().range(['#7a3b2e', '#a79e84', '#bd5734', '#454140', '#f7786b', '#f7cac9', '#034f84', '#92a8d1', '#ada397', '#bdcebe', '#eca1a6', '#d6cbd3', '#ff7b25', '#d64161', '#feb236', '#6b5b95']);
       var chord = d3.layout.chord().padding(.02).sortSubgroups(d3.descending).sortChords(d3.descending);
       var arc = d3.svg.arc().innerRadius(r0).outerRadius(r0 + 20);
-      var svg = d3.select(elem[0]).attr("width", w).attr("height", h).append("svg:g").attr("id", "circle").attr("transform", "translate(" + w / 2 + "," + h / 2 + ")");
+
+      var svg = d3.select(panel.svgContainer).append("svg").attr("width", w).attr("height", h).attr("class", "d3-chord").append("svg:g").attr("id", "circle").attr("transform", "translate(" + w / 2 + "," + h / 2 + ")");
       svg.append("circle").attr("r", r0 + 20);
       var rdr = Mapper.chordRdr(matrix, mmap);
       chord.matrix(matrix);
@@ -127,7 +137,10 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
       }).attr("d", arc);
       g.append("svg:text").each(function (d) {
         d.angle = (d.startAngle + d.endAngle) / 2;
-      }).attr("dy", ".35em").style("font-family", "helvetica, arial, sans-serif").style("font-size", "15px").style("fill", "white").attr("text-anchor", function (d) {
+      }).attr("dy", ".35em").style("font-family", "helvetica, arial, sans-serif").style("font-size", function (d) {
+        return checkHighlight(rdr(d).gname) ? "15px" : "0px";
+      }) // remove text
+      .style("fill", "white").attr("text-anchor", function (d) {
         return d.angle > Math.PI ? "end" : null;
       }).attr("transform", function (d) {
         return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")" + "translate(" + (r0 + 26) + ")" + (d.angle > Math.PI ? "rotate(180)" : "");
@@ -172,12 +185,27 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
           return p.source.index != i && p.target.index != i;
         });
       }
+
+      // if (ctrl.highlight_text) {
+      //   g.selectAll("path")
+      //     .transition()
+      //     .duration(1000)
+      //     .delay(2000)
+      //     .attr("d", d => { return checkHighlight(rdr(d).gname) ? highlightedArc : arc })
+      //     .style("stroke", "black")
+      //     .style("fill", function(d) { return fill(rdr(d).gname); })
+      //     .transition()
+      //     .duration(1000)
+      //     .delay(1000)
+      //     .attr("d", arc)
+      //     .style("stroke", "black")
+      //     .style("fill", function(d) { return fill(rdr(d).gname); })
+      // }
     }
 
     function render() {
       data = ctrl.data;
       panel = ctrl.panel;
-
       if (setElementHeight()) if (ctrl._error || !data || !data.length) {
 
         showError(ctrl._error || "No data points");
@@ -185,33 +213,6 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
         data = [];
         addChordChart();
       } else {
-        // var csvData = csvData.filter(function(d){ return d.importer1 == "Panama"});
-        // data = [
-        //   {
-        //     dir1: "framework",
-        //     dir2: "utils",
-        //     coupling1: 12,
-        //     coupling2: 12,
-        //   },
-        //   {
-        //     dir1: "framework",
-        //     dir2: "tools",
-        //     coupling1: 62,
-        //     coupling2: 62,
-        //   },
-        //   {
-        //     dir1: "framework",
-        //     dir2: "ipojo",
-        //     coupling1: 122,
-        //     coupling2: 122,
-        //   },
-        //   {
-        //     dir1: "framework",
-        //     dir2: "test",
-        //     coupling1: 23,
-        //     coupling2: 23,
-        //   },
-        // ];
         var mpr = Mapper.chordMpr(data);
         mpr.addValuesToMap('source').addValuesToMap('target').setFilter(function (row, a, b) {
           return row.source === a.name && row.target === b.name || row.source === b.name && row.target === a.name;

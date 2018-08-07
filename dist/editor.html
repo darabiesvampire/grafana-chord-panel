@@ -1,3 +1,25 @@
 <div class="editor-row">
-
+    <div class="section gf-form-group">
+        <h5 class="section-heading">Data</h5>
+        <div class="gf-form">
+            <label class="gf-form-label width-10">Metric</label>
+            <div class="gf-form-select-wrapper max-width-15">
+                <select class="gf-form-input" ng-model="ctrl.panel.metric" ng-options="item.value as item.text for item in ctrl.couplingMetrics" ng-change="ctrl.refresh()"> </select>
+            </div>
+        </div>
+        <div class="gf-form" ng-show="ctrl.panel.metric === 'cohesion'">
+            <label class="gf-form-label width-10">Cohesion Method</label>
+            <div class="gf-form-select-wrapper max-width-15">
+                <select class="gf-form-input" ng-model="ctrl.panel.cohesionCalculationMethod" ng-options="item.value as item.text for item in ctrl.cohesionCalculationMethods" ng-change="ctrl.refresh()"> </select>
+            </div>
+        </div>
+        <div class="gf-form">
+            <label class="gf-form-label width-10">Target</label>
+            <div class="gf-form-select-wrapper max-width-15">
+                <select class="gf-form-input" ng-model="ctrl.panel.target" ng-options="item.value as item.text for item in ctrl.targetSelections" ng-change="ctrl.refresh()"> </select>
+            </div>
+        </div>
+        <gf-form-switch class="gf-form" label="Additional Metric" label-class="width-10" checked="ctrl.panel.additionalMetric" on-change="ctrl.refresh()">
+        </gf-form-switch>
+    </div>
 </div>

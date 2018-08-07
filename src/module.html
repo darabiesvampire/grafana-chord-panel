@@ -91,23 +91,23 @@
 
 	<!--<div class="caption-holder">-->
 		<!--<svg class="caption" ></svg>-->
-	<!--</div>	-->
-
-	<!--<div class="next-to-captions gf-form">-->
-
-		<!--<input class="gf-form-input max-width-12 highlight" -->
-			<!--bs-tooltip="'Find in the graph nodes and highlight them.'"-->
-			<!--data-placement="bottom"-->
-			<!--placeholder="Highlight"-->
-			<!--ng-model="ctrl.highlight_text"-->
-			<!--ng-model-options="{debounce: 750}" -->
-			<!--ng-change="ctrl.highlight()"  />-->
-
 	<!--</div>-->
 
-	<svg class="networkchart-panel full_width_height">
-		<text class="no-data" x="15" y="15" fill="red">No data points</text>
-	</svg>
+	<div class="next-to-captions gf-form">
+
+		<input class="gf-form-input max-width-12 highlight"
+			bs-tooltip="'Find in the iris and highlight them.'"
+			data-placement="bottom"
+			placeholder="Highlight"
+			ng-model="ctrl.highlight_text"
+			ng-model-options="{debounce: 750}"
+			ng-change="ctrl.highlight()"  />
+
+	</div>
+	<div style="display: flex; align-items: center; justify-content: center;" class="grafana-d3-chord"></div>
+	<!--<svg class="networkchart-panel full_width_height">-->
+		<!--<text class="no-data" x="15" y="15" fill="red">No data points</text>-->
+	<!--</svg>-->
 
 </div>
 <div class="clearfix"></div>

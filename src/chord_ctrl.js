@@ -12,16 +12,64 @@ export class ChordCtrl extends MetricsPanelCtrl {
     this.templateSrv = templateSrv;
     this.detangleSrv = detangleSrv;
     var panelDefaults = {
-
+      detangle: {
+        coupling: true,
+        metric: 'coupling',
+        target: 'file',
+        cohesionCalculationMethod: 'standard',
+        sourceType: '$issue_type',
+        targetType: '$target_issue_type',
+        sourceTypeData: '',
+        targetTypeData: '',
+        author: '$author',
+        authorData: '',
+        yearData: '',
+        minIssuesPerFile: null,
+        minIssuesData: '',
+        minFilesPerIssue: null,
+        minFilesData: '',
+        issueTitle: '$issue_title',
+        issueTitleData: '',
+        fileExcludeFilter: '$file_exclude',
+        fileExcludeFilterData: '',
+        metricRange: '$metric_range',
+        metricRangeData: '',
+        fileGroup: '$file_group',
+      }
     };
 
     _.defaults(this.panel, panelDefaults);
+    this.panel.chordDivId = 'd3chord_svg_' + this.panel.id;
+    this.containerDivId = 'container_'+this.panel.chordDivId;
+    this.panelContainer = null;
+    this.panel.svgContainer = null;
 
     //this.events.on('render', this.onRender.bind(this));
     this.events.on('data-received', this.onDataReceived.bind(this));
     this.events.on('data-error', this.onDataError.bind(this));
     this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
+
+    this.couplingMetrics = [
+      {text: 'Coupling Value', value: 'coupling'},
+      {text: 'Num. of Couples', value: 'couplecounts'},
+      {text: 'Cohesion Value', value: 'cohesion'},
+
+    ];
+
+    this.targetSelections = [
+      {text: 'Issues|Committers', value: 'issue'},
+      {text: 'Files', value: 'file'},
+    ];
+
+    this.cohesionCalculationMethods = [
+      {
+        text: 'Standard', value: 'standard'
+      },
+      {
+        text: 'Double', value: 'double'
+      }
+    ];
   }
 
   onInitEditMode() {
@@ -34,6 +82,11 @@ export class ChordCtrl extends MetricsPanelCtrl {
     this.columns = [];
     this.data = [];
     this.render();
+  }
+
+  setContainer(container) {
+    this.panelContainer = container;
+    this.panel.svgContainer = container;
   }
 
 
@@ -80,14 +133,7 @@ export class ChordCtrl extends MetricsPanelCtrl {
 
     this.columnMap = data.columnMap; 
     this.columns = data.columns;
-    this.data = this.detangleSrv.dataConvertor(dataList, this.templateSrv, {
-      target: 'file',
-      metric: 'coupling',
-      coupling: true,
-      sortingOrder: 'desc',
-      sourceTypeData: 'All',
-      targetTypeData: 'All',
-    }, 'chord');
+    this.data = this.detangleSrv.dataConvertor(dataList, this.templateSrv, this.panel.detangle, 'chord');
     this.render(this.data);
   }
 
@@ -99,7 +145,6 @@ export class ChordCtrl extends MetricsPanelCtrl {
 
   highlight(){
     this.render(); 
-    this.prev_highlight_text =  this.highlight_text;
   }
 }
 
