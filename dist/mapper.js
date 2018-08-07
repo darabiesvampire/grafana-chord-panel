@@ -97,7 +97,8 @@ System.register(['lodash'], function (_export, _context) {
                   s = void 0,
                   t = void 0,
                   g = void 0,
-                  m = {};
+                  m = {},
+                  connectionArray = [];
               if (d.source) {
                 i = d.source.index;j = d.target.index;
                 s = _.filter(mmap, { id: i });
@@ -116,6 +117,11 @@ System.register(['lodash'], function (_export, _context) {
                 }, 0);
               } else {
                 g = _.filter(mmap, { id: d.index });
+                _.each(matrix[d.index], function (item, index) {
+                  if (item > 0) {
+                    connectionArray.push(_.filter(mmap, { id: index })[0].name);
+                  }
+                });
                 m.gname = g[0].name;
                 m.gdata = g[0].data;
                 m.gvalue = d.value;
@@ -125,6 +131,7 @@ System.register(['lodash'], function (_export, _context) {
                   return m2 + n2;
                 }, 0);
               }, 0);
+              m.connections = connectionArray;
               return m;
             };
           }

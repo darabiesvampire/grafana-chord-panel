@@ -131,11 +131,14 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
       chord.matrix(matrix);
       var g = svg.selectAll("g.group").data(chord.groups()).enter().append("svg:g").attr("class", "group").on("mouseover", mouseover).on("mouseout", function (d) {
         d3.select("#tooltip").style("visibility", "hidden");
+        allTheGroups.transition().style("font-size", function (d) {
+          return checkHighlight(rdr(d).gname) ? "15px" : "0px";
+        });
       });
       g.append("svg:path").style("stroke", "black").style("fill", function (d) {
         return fill(rdr(d).gname);
       }).attr("d", arc);
-      g.append("svg:text").each(function (d) {
+      var allTheGroups = g.append("svg:text").each(function (d) {
         d.angle = (d.startAngle + d.endAngle) / 2;
       }).attr("dy", ".35em").style("font-family", "helvetica, arial, sans-serif").style("font-size", function (d) {
         return checkHighlight(rdr(d).gname) ? "15px" : "0px";
@@ -157,8 +160,16 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
         }).style("left", function () {
           return d3.event.pageX - 100 + "px";
         });
-      }).on("mouseout", function (d) {
+        var actualItem = rdr(d);
+        allTheGroups.transition().style("font-size", function (item) {
+          var itemName = rdr(item).gname;
+          return actualItem.tname === itemName || actualItem.sname === itemName ? "15px" : "0px";
+        });
+      }).on("mouseout", function () {
         d3.select("#tooltip").style("visibility", "hidden");
+        allTheGroups.transition().style("font-size", function (d) {
+          return checkHighlight(rdr(d).gname) ? "15px" : "0px";
+        });
       });
       function chordTip(d) {
         var p = d3.format(".1%"),
@@ -171,11 +182,22 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
         // + p(d.tvalue/d.mtotal) + " of Total ($" + q(d.mtotal) + ")";
       }
       function groupTip(d) {
+        console.log(d);
         var p = d3.format(".1%"),
             q = d3.format(",.2f");
         return "Directory Info:<br/>" + d.gname + " : " + q(d.gvalue) + "<br/>" + p(d.gvalue / d.mtotal) + " of Total (" + q(d.mtotal) + ")";
       }
       function mouseover(d, i) {
+        var actualItem = rdr(d);
+        allTheGroups.transition().style("font-size", function (item) {
+          var itemName = rdr(item).gname;
+          return actualItem.connections.includes(itemName) || actualItem.gname === itemName ? "15px" : "0px";
+        });
+        // _.each(allTheGroups, (group) => {
+        //   if (group.textContent === d.textContent) {
+        //     group.transition().style("font-size", "15px");
+        //   }
+        // });
         d3.select("#tooltip").style("visibility", "visible").html(groupTip(rdr(d))).style("top", function () {
           return d3.event.pageY - 80 + "px";
         }).style("left", function () {

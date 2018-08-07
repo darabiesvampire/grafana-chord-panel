@@ -150,12 +150,15 @@ export default function link(scope, elem, attrs, ctrl) {
       .enter().append("svg:g")
       .attr("class", "group")
       .on("mouseover", mouseover)
-      .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });
+      .on("mouseout", function (d) {
+        d3.select("#tooltip").style("visibility", "hidden");
+        allTheGroups.transition().style("font-size", function(d) { return checkHighlight(rdr(d).gname) ? "15px" : "0px"; });
+      });
     g.append("svg:path")
       .style("stroke", "black")
       .style("fill", function(d) { return fill(rdr(d).gname); })
       .attr("d", arc);
-    g.append("svg:text")
+    var allTheGroups = g.append("svg:text")
       .each(function(d) { d.angle = (d.startAngle + d.endAngle) / 2; })
       .attr("dy", ".35em")
       .style("font-family", "helvetica, arial, sans-serif")
@@ -180,9 +183,18 @@ export default function link(scope, elem, attrs, ctrl) {
           .style("visibility", "visible")
           .html(chordTip(rdr(d)))
           .style("top", function () { return (d3.event.pageY - 170)+"px"})
-          .style("left", function () { return (d3.event.pageX - 100)+"px";})
+          .style("left", function () { return (d3.event.pageX - 100)+"px";});
+        let actualItem = rdr(d);
+        allTheGroups.transition().style("font-size", function(item)
+        {
+          let itemName = rdr(item).gname;
+          return actualItem.tname === itemName || actualItem.sname === itemName ? "15px"  : "0px"
+        });
       })
-      .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });
+      .on("mouseout", function () {
+        d3.select("#tooltip").style("visibility", "hidden");
+        allTheGroups.transition().style("font-size", function(d) { return checkHighlight(rdr(d).gname) ? "15px" : "0px"; });
+      });
     function chordTip (d) {
       var p = d3.format(".1%"), q = d3.format(",.2f")
       return "Chord Info:<br/>"
@@ -203,6 +215,17 @@ export default function link(scope, elem, attrs, ctrl) {
         + p(d.gvalue/d.mtotal) + " of Total (" + q(d.mtotal) + ")"
     }
     function mouseover(d, i) {
+      let actualItem = rdr(d);
+      allTheGroups.transition().style("font-size", function(item)
+      {
+        let itemName = rdr(item).gname;
+        return actualItem.connections.includes(itemName) || actualItem.gname === itemName ? "15px"  : "0px"
+      });
+      // _.each(allTheGroups, (group) => {
+      //   if (group.textContent === d.textContent) {
+      //     group.transition().style("font-size", "15px");
+      //   }
+      // });
       d3.select("#tooltip")
         .style("visibility", "visible")
         .html(groupTip(rdr(d)))

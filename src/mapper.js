@@ -58,7 +58,7 @@ export default class Mapper {
 //*******************************************************************
   static chordRdr (matrix, mmap) {
     return function (d) {
-      let i, j, s, t, g, m = {};
+      let i, j, s, t, g, m = {}, connectionArray = [];
       if (d.source) {
         i = d.source.index; j = d.target.index;
         s = _.filter(mmap, {id: i });
@@ -73,6 +73,11 @@ export default class Mapper {
         m.ttotal = _.reduce(matrix[j], function (k, n) { return k + n }, 0);
       } else {
         g = _.filter(mmap, {id: d.index });
+        _.each(matrix[d.index], (item, index) => {
+          if (item > 0) {
+            connectionArray.push(_.filter(mmap, {id: index })[0].name);
+          }
+        });
         m.gname = g[0].name;
         m.gdata = g[0].data;
         m.gvalue = d.value;
@@ -80,6 +85,7 @@ export default class Mapper {
       m.mtotal = _.reduce(matrix, function (m1, n1) {
         return m1 + _.reduce(n1, function (m2, n2) { return m2 + n2}, 0);
       }, 0);
+      m.connections = connectionArray;
       return m;
     }
   }
