@@ -24,7 +24,7 @@ export class ChordCtrl extends MetricsPanelCtrl {
         author: '$author',
         authorData: '',
         yearData: '',
-        minIssuesPerFile: null,
+        minIssuesPerFile: '$min_issues',
         minIssuesData: '',
         minFilesPerIssue: null,
         minFilesData: '',
