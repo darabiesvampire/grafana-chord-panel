@@ -35,6 +35,7 @@ export class ChordCtrl extends MetricsPanelCtrl {
         metricRange: '$metric_range',
         metricRangeData: '',
         fileGroup: '$file_group',
+        threshold: 0
       }
     };
 
@@ -133,6 +134,14 @@ export class ChordCtrl extends MetricsPanelCtrl {
 
     this.columnMap = data.columnMap; 
     this.columns = data.columns;
+    let globalTarget = this.templateSrv.replaceWithText('$global_target', this.panel.scopedVars);
+    if (globalTarget) {
+      globalTarget = globalTarget.trim();
+    }
+    let shouldApplyGlobalTarget = globalTarget !== "" && globalTarget !== '-' && globalTarget !== '$global_target';
+    if (shouldApplyGlobalTarget) {
+      this.panel.detangle.target = globalTarget === 'files' ? 'file' : 'issue';
+    }
     this.data = this.detangleSrv.dataConvertor(dataList, this.templateSrv, this.panel.detangle, 'chord');
     this.render(this.data);
   }
