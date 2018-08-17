@@ -121,7 +121,7 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
           h = height,
           r1 = h / 2,
           r0 = r1 - 110;
-      var fill = d3.scale.ordinal().range(['#7a3b2e', '#a79e84', '#bd5734', '#454140', '#f7786b', '#f7cac9', '#034f84', '#92a8d1', '#ada397', '#bdcebe', '#eca1a6', '#d6cbd3', '#ff7b25', '#d64161', '#feb236', '#6b5b95']);
+      var fill = d3.scale.ordinal().range(['#eca1a6', '#7a3b2e', '#d6cbd3', '#454140', '#ff7b25', '#d64161', '#feb236', '#6b5b95', '#bdcebe', "#023fa5", "#7d87b9", "#bec1d4", "#d6bcc0", '#a79e84', "#bb7784", "#8e063b", "#4a6fe3", "#8595e1", "#b5bbe3", "#e6afb9", '#f7786b', "#e07b91", '#ada397', "#d33f6a", "#11c638", "#8dd593", '#92a8d1', "#c6dec7", "#ead3c6", "#f0b98d", "#ef9708", "#0fcfc0", "#9cded6", "#d5eae7", "#f3e1eb", "#f6c4e1", '#bd5734', "#f79cd4", '#034f84']);
       var chord = d3.layout.chord().padding(.02).sortSubgroups(d3.descending).sortChords(d3.descending);
       var arc = d3.svg.arc().innerRadius(r0).outerRadius(r0 + 20);
       var highlightedArc = d3.svg.arc().innerRadius(r0).outerRadius(r0 + 70);
@@ -182,7 +182,7 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
       function groupTip(d) {
         var p = d3.format(".1%"),
             q = d3.format(",.2f");
-        return "Directory Info:<br/>" + d.gname + " : " + q(d.gvalue) + "<br/>" + p(d.gvalue / d.mtotal) + " of Total (" + q(d.mtotal) + ")";
+        return "Coupling Info:<br/>" + d.gname + " : " + q(d.gvalue) + "<br/>" + p(d.gvalue / d.mtotal) + " of Total (" + q(d.mtotal) + ")";
       }
       function mouseover(d, i) {
         var actualItem = rdr(d);
