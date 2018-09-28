@@ -22,6 +22,7 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
 
     // elem = elem.find('.networkchart-panel');
 
+    var $panelContainer = elem.find('.panel-container');
 
     ctrl.events.on('render', function () {
       render();
@@ -92,7 +93,7 @@ System.register(['lodash', 'app/core/app_events', './mapper'], function (_export
       var trueWidth = 0;
       if (typeof panel.span === 'undefined') {
         // get the width based on the scaled container (v5 needs this)
-        trueWidth = panel.panelContainer.offsetParent.clientWidth;
+        trueWidth = $panelContainer[0].clientWidth;
       } else {
         // v4 and previous used fixed spans
         var viewPortWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);

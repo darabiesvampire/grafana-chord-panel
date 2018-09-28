@@ -21,6 +21,7 @@ export default function link(scope, elem, attrs, ctrl) {
 
   // elem = elem.find('.networkchart-panel');
 
+  var $panelContainer = elem.find('.panel-container');
 
   ctrl.events.on('render', function() {
     render();
@@ -95,7 +96,7 @@ export default function link(scope, elem, attrs, ctrl) {
     var trueWidth = 0;
     if (typeof panel.span === 'undefined') {
       // get the width based on the scaled container (v5 needs this)
-      trueWidth = panel.panelContainer.offsetParent.clientWidth;
+      trueWidth = $panelContainer[0].clientWidth;
     } else {
       // v4 and previous used fixed spans
       var viewPortWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
